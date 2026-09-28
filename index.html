@@ -5,26 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Aura Checker</title>
     <style>
+      html {
+        scroll-behavior: smooth;
+      }
       body {
         margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         background: #12081f;
         color: #fff;
         font-family: Arial, sans-serif;
         text-align: center;
-        overflow: hidden;
+        overflow-x: hidden;
+      }
+
+      /* navigation bar */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        padding: 0 20px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(18, 8, 31, 0.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid #3b2260;
+        z-index: 10;
+      }
+      .logo {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #f0abfc;
+      }
+      nav a {
+        color: #c9b8e8;
+        text-decoration: none;
+        margin-left: 18px;
+        transition: color 0.2s;
+      }
+      nav a:hover {
+        color: #fff;
+      }
+
+      /* sections */
+      section {
+        min-height: 100vh;
+        padding: 76px 20px 30px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .box {
-        padding: 30px;
         max-width: 380px;
         width: 100%;
       }
       h1 {
         font-size: 2.4rem;
         margin-bottom: 8px;
+      }
+      h2 {
+        font-size: 1.8rem;
       }
       p {
         color: #c9b8e8;
@@ -112,19 +155,51 @@
     </style>
   </head>
   <body>
-    <div class="box">
-      <h1>Aura Checker</h1>
-      <p>Type your name and see your aura points today.</p>
-      <input id="name" placeholder="Your name" />
-      <button onclick="check()">Check my aura</button>
-
-      <div class="stage" id="stage">
-        <div class="aura"></div>
-        <div id="result"></div>
+    <nav>
+      <div class="logo">Aura Checker</div>
+      <div>
+        <a href="#home">Home</a>
+        <a href="#how">How it works</a>
+        <a href="#about">About</a>
       </div>
+    </nav>
 
-      <button id="copy" onclick="copyResult()" hidden>Copy result</button>
-    </div>
+    <section id="home">
+      <div class="box">
+        <h1>Aura Checker</h1>
+        <p>Type your name and see your aura points today.</p>
+        <input id="name" placeholder="Your name" />
+        <button onclick="check()">Check my aura</button>
+
+        <div class="stage" id="stage">
+          <div class="aura"></div>
+          <div id="result"></div>
+        </div>
+
+        <button id="copy" onclick="copyResult()" hidden>Copy result</button>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="box">
+        <h2>How it works</h2>
+        <p>
+          Type your name and press the button. The page picks a random number
+          from -10000 to 10000. A high number means big aura. A low number means
+          negative aura.
+        </p>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="box">
+        <h2>About</h2>
+        <p>
+          This is a fun page made for my Git and GitHub Pages activity. The
+          score is random, so don't take it seriously.
+        </p>
+      </div>
+    </section>
 
     <script>
       var lastText = "";
