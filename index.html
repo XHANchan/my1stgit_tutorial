@@ -15,10 +15,12 @@
         color: #fff;
         font-family: Arial, sans-serif;
         text-align: center;
+        overflow: hidden;
       }
       .box {
         padding: 30px;
         max-width: 380px;
+        width: 100%;
       }
       h1 {
         font-size: 2.4rem;
@@ -44,15 +46,68 @@
         background: #a855f7;
         color: #fff;
         cursor: pointer;
+        transition: transform 0.2s;
+      }
+      button:hover {
+        transform: scale(1.06);
+      }
+
+      /* the glowing aura */
+      .stage {
+        position: relative;
+        height: 240px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+      }
+      .stage.show {
+        animation: pop 0.8s ease forwards;
+      }
+      .aura {
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        background: conic-gradient(var(--c1), var(--c2), var(--c1));
+        filter: blur(30px);
+        animation:
+          spin 6s linear infinite,
+          glow 2.5s ease-in-out infinite;
       }
       #result {
-        margin-top: 24px;
+        position: relative;
         font-size: 1.3rem;
       }
       #points {
-        font-size: 3rem;
+        font-size: 3.2rem;
         font-weight: bold;
-        color: #f0abfc;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes glow {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      }
+      @keyframes pop {
+        from {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
     </style>
   </head>
@@ -62,16 +117,65 @@
       <p>Type your name and see your aura points today.</p>
       <input id="name" placeholder="Your name" />
       <button onclick="check()">Check my aura</button>
-      <div id="result"></div>
+
+      <div class="stage" id="stage">
+        <div class="aura"></div>
+        <div id="result"></div>
+      </div>
+
+      <button id="copy" onclick="copyResult()" hidden>Copy result</button>
     </div>
 
     <script>
+      var lastText = "";
+
       function check() {
         var name = document.getElementById("name").value || "Mystery person";
         var points = Math.floor(Math.random() * 20001) - 10000;
-        var msg = points >= 0 ? "Big aura. W." : "Negative aura. L.";
+
+        var level = "Aura debt";
+        if (points >= 8000) level = "Legendary aura";
+        else if (points >= 3000) level = "Main character";
+        else if (points >= 0) level = "Solid aura";
+        else if (points >= -5000) level = "NPC energy";
+
+        // gold and purple for good aura, red for bad aura
+        var stage = document.getElementById("stage");
+        stage.style.setProperty("--c1", points >= 0 ? "#a855f7" : "#ef4444");
+        stage.style.setProperty("--c2", points >= 0 ? "#facc15" : "#7f1d1d");
+
         document.getElementById("result").innerHTML =
-          name + "<br><span id='points'>" + points + "</span><br>" + msg;
+          name + "<br><span id='points'>0</span><br>" + level;
+
+        // play the pop animation again each time
+        stage.classList.remove("show");
+        void stage.offsetWidth;
+        stage.classList.add("show");
+
+        // count up the score
+        var start = null;
+        function step(time) {
+          if (!start) start = time;
+          var p = Math.min((time - start) / 1500, 1);
+          var ease = 1 - Math.pow(1 - p, 3);
+          document.getElementById("points").textContent = Math.round(
+            points * ease,
+          );
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+
+        lastText = name + " has " + points + " aura points. " + level + "!";
+        document.getElementById("copy").hidden = false;
+      }
+
+      function copyResult() {
+        var btn = document.getElementById("copy");
+        navigator.clipboard.writeText(lastText);
+        btn.textContent = "Copied!";
+        setTimeout(function () {
+          btn.textContent = "Copy result";
+        }, 1500);
       }
     </script>
   </body>
